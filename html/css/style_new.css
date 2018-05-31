@@ -1,0 +1,85 @@
+body,html{ margin:0; height:100%; width:100%;}
+
+body{
+       padding:20px;
+       overflow:hidden;
+    font-family:verdana;
+    margin: 0 auto;
+    background-image: url(narcos_bg.jpg);
+    /*background-color: #9a9a9a;*/
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+div.clear{ clear:both;}
+.hidden{ display:none;}
+
+
+#switch { height:58px;width:48px;background:url(../imgs/off.png) no-repeat center center; }
+#switch.on{background:url(../imgs/on.png) no-repeat center center;}
+
+
+#input{ padding:10px; font-size:25px;  background-color:#fff; margin-top:30px; display:inline-block;}
+#input input{     font-size: 25px;
+    border: 1PX SOLID #CCC;
+    width: 72px; }
+#input input.btn{ width:108px;}
+
+
+#wires{
+    background-color:#fff;
+    display:inline-block;
+    
+    
+}
+h2{ margin-bottom:20px;} 
+h2 span{ display:block; text-align:center; font-size:11px;}
+#wires .wire{ width:250px; height:30px; background-color:#ccc; text-align:center; vertical-align:middle; line-height:30px; cursor:move;}
+#wires .wire:hover{background-color:#ddd;}
+
+
+h1#running{ font-size:30px; color:#f00;}
+/*
+#keypad{
+    position:relative;
+    margin:0 auto;
+    background-color:#aeb6b9;
+    width:730px;
+}
+
+
+
+#keypad .k_button{
+display:inline-block;
+    height:133px;
+    width:173px;
+    border:0;
+   
+}
+
+.k_button.sp{ margin-left:20px;}
+
+#keypad #k1{ background: url(../imgs/kp/1.jpg) no-repeat center center;}
+#keypad #k2{ background: url(../imgs/kp/2.jpg) no-repeat center center;}
+#keypad #k3{ background: url(../imgs/kp/3.jpg) no-repeat center center;}
+#keypad #ka{ background: url(../imgs/kp/blank.jpg) no-repeat center center;}
+
+#keypad #k4{ background: url(../imgs/kp/4.jpg) no-repeat center center;}
+#keypad #k5{ background: url(../imgs/kp/5.jpg) no-repeat center center;}
+#keypad #k6{ background: url(../imgs/kp/6.jpg) no-repeat center center;}
+#keypad #kb{ background: url(../imgs/kp/blank.jpg) no-repeat center center;}
+
+#keypad #k7{ background: url(../imgs/kp/7.jpg) no-repeat center center;}
+#keypad #k8{ background: url(../imgs/kp/8.jpg) no-repeat center center;}
+#keypad #k9{ background: url(../imgs/kp/9.jpg) no-repeat center center;}
+#keypad #kc{ background: url(../imgs/kp/blank.jpg) no-repeat center center;}
+
+#keypad #kast{ background: url(../imgs/kp/blank.jpg) no-repeat center center;}
+#keypad #k0{ background: url(../imgs/kp/0.jpg) no-repeat center center;}
+#keypad #kcanc{ background: url(../imgs/kp/blank.jpg) no-repeat center center;}
+#keypad #kd{ background: url(../imgs/kp/blank.jpg) no-repeat center center;}
+*/
+
+pre{
+    color:#fff;
+}
