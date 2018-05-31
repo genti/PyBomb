@@ -1,6 +1,6 @@
 <?php 
 
-$command='/var/www/html/BOMB_WRAPPER.sh > /dev/null' ; 
+$command='./BOMB_WRAPPER.sh > /dev/null' ; 
 
 exec($command, $output);
 
