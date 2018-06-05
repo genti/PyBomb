@@ -117,7 +117,7 @@ class WiresCheck:
         defused=False;
         
         while Stopwatch._running:
-        
+            
             if (self.w_a or self.w_b or self.w_c or self.w_d or self.w_e or self.w_f or self.w_g or self.w_h):
                 str="Defusing"
                 printOnLcD(str,3)  
@@ -226,13 +226,16 @@ class WiresCheck:
                 Stopwatch.terminate()
                 defused=True
                 
-                
+            time.sleep(0.5)
+            
         if not defused:
             printOnLcD("BOOOOOOM!!",3)
             printOnLcD("YOU LOOSE",4)
         else:
             printOnLcD("BOMB",3)
             printOnLcD("DEFUSED",4)
+        
+        
         
         os.remove(PID_FILE)
     
@@ -273,14 +276,15 @@ if __name__ == '__main__':
                 
                 started = True
             
-            # if started and GPIO.input(21) == GPIO.LOW:
             
-                # Stopwatch.terminate()
-                # DefuseBomb.terminate()
     
             if not started and GPIO.input(21) == GPIO.LOW:
-                printOnLcD("GDP narcos bomb %s" % version,1) 
+                printOnLcD("GDP PyBomb v" % version,1) 
                 printOnLcD("Girare la chiave",2) 
+            
+            
+            time.sleep(0.5)
+            
         
     except KeyboardInterrupt:
         pass        

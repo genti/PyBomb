@@ -1,6 +1,6 @@
 <?php
-if (!ini_get('display_errors')) {
-    ini_set('display_errors', '1');
+if (!ini_get("display_errors")) {
+    ini_set("display_errors", "1");
 }
 
 
@@ -10,17 +10,17 @@ $wires=4; #max 7 fili
 $wires_custom_array=array(4,17,27,22,23,24,25,5);
 
 
-$file_wires = 'wires.txt';
+$file_wires = "wires.txt";
 $current_W = file_get_contents($file_wires);
 $custom_order=array_filter(explode(" ",trim($current_W)));
 
-$file_time = 'time.txt';
+$file_time = "time.txt";
 $current_T = file_get_contents($file_time);
 $time_array=explode(" ",$current_T);
 
 
 if(count($custom_order)>0 && count($custom_order) != $wires){
-    file_put_contents($file, '');
+    file_put_contents($file, "");
     header("Location: index.php");
 } 
 
@@ -42,7 +42,7 @@ if (file_exists("/home/pi/TIMER_RUNNING"))
     <link rel="stylesheet" href="css/style_new.css">
     <link rel="stylesheet" href="jquery-ui/jquery-ui.theme.min.css">
 
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
   <script src="jquery-ui/external/jquery/jquery.js"></script>
   <script src="jquery-ui/jquery-ui.min.js"></script>
 <script src="jquery.ui.mobile.js"></script>
@@ -51,16 +51,16 @@ if (file_exists("/home/pi/TIMER_RUNNING"))
 
 
  <script>
- var str='';
+ var str="";
   $( function() {
       
-     <?php if (!$bomb_running){ ?> 
+     <?php  if (!$bomb_running){ ?> 
       
-      $('#switch').click(function(){ 
+      $("#switch").click(function(){ 
       
-        if(confirm('Sei sicuro di voler armare la bomba?')){
-            $(this).toggleClass('on');
-            window.location='start_BOMB.php';
+        if(confirm("Sei sicuro di voler armare la bomba?")){
+            $(this).toggleClass("on");
+            window.location="start_BOMB.php";
         
         }}
         
@@ -72,19 +72,19 @@ if (file_exists("/home/pi/TIMER_RUNNING"))
       
       
       
-      $('.wire').each(function(){
+      $(".wire").each(function(){
                 str=str+" "+this.id;                
-                $('#wire_new_order').val(str);
+                $("#wire_new_order").val(str);
             });
       
-   // $('#wires').draggable();
+   // $("#wires").draggable();
     $( "#sortabale" ).sortable({
       revert: true,
-      start: function(){ str='';},
+      start: function(){ str="";},
       stop: function( event, ui ) { 
-            $('.wire').each(function(){
+            $(".wire").each(function(){
                 str=str+" "+this.id;                
-                $('#wire_new_order').val(str);
+                $("#wire_new_order").val(str);
             });
       }
 
@@ -98,16 +98,26 @@ if (file_exists("/home/pi/TIMER_RUNNING"))
     <!-- page content -->
     
     <div id="main">
-       
-              <?php if (!$bomb_running ){?>  
+       <h1 id="title"> Narcos PyBomb </h1>
+              
+              <?php if (!$bomb_running){?>  
       
         
+        <div id="input">
+        <h2>Detonation time</h2>
+            <form action="save_time.php" method="POST">
+                <input type="text" name="HH" value="<?= isset($time_array[0]) ? $time_array[0] : "" ?>" maxlength="2" />:<input  value="<?= isset($time_array[1]) ? $time_array[1] : "" ?>" type="text" name="MM" maxlength="2"/>:<input value="<?= isset($time_array[2]) ? $time_array[2] : "00" ?>" type="text" name="SS" maxlength="2"/> | <input class="btn" type="submit" value="GO" />
+            </form>
+            
+        </div>
 
+        <div class="clear"></div>
+        
         <div id="wires">
         <form action="save_wires.php" method="POST">
             <h2>Wire correct cutting order <span>(drag to sort)</span> </h2>
             
-            <span class="neworder"></span>
+           
             <ul id="sortabale">
             <?php if (count($custom_order) > 0){
                
@@ -124,38 +134,26 @@ if (file_exists("/home/pi/TIMER_RUNNING"))
             } }
             ?>
             </ul>
-            <hr/>
-            <input type="text" id="wire_new_order" value="<?=$current_W?>" name="order"/>
-            <input type="submit" value="SALVA" />
+            <span class="hr"></span>
+            <input type="text" id="wire_new_order" class="hidden" value="<?=$current_W?>" name="order"/>
+            <input type="submit" class="btn" value="SALVA" />
             </form>
         </div>
         
-        <div class="clear" />
-        <div id="input">
-        <h2>Detonation time</h2>
-            <form action="save_time.php" method="POST">
-                <input type="text" name="HH" value="<?= isset($time_array[0]) ? $time_array[0] : "" ?>" maxlength="2" />:<input  value="<?= isset($time_array[1]) ? $time_array[1] : "" ?>" type="text" name="MM" maxlength="2"/>:<input value="<?= isset($time_array[2]) ? $time_array[2] : "00" ?>" type="text" name="SS" maxlength="2"/> | <input class="btn" type="submit" value="GO" />
-            </form>
-            
-        </div>
+        
         
        
-
+            
             <div id="switch" class="">
-                
+                    PREPARE
             </div>
+           
      
-        <pre>
-        <ol>
-            <li>Configurare l'ordine dei fili per disinnescare la bomba;</li>
-            <li>Configurare il tempo di durata game;</li>
-            <li>Azionare l'ordingno, da questo momento in poi si potrà disinnescare O tagliando i fili nel'ordine corretto O con l'interruttore a chiave.;</li>
-        </ol>
-        </pre>
+        
         
         
        <?php } else { ?>
-       <h1 id="running"> BOMB IS RUNNING </h1>
+       <h1 id="running"> BOMB IS READY </h1>
        <?php } ?>
     </div>
     
