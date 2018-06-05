@@ -20,3 +20,7 @@ V 0.4
 Inserito interruttore a chiave per innesco bomba
 Corretta procedura controllo disinnesco 
 Aggiunti messaggi di conferma disinnesco ed esplosione 
+
+v 0.41
+
+Modificato css al webserver
