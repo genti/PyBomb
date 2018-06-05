@@ -2,7 +2,7 @@
 # non si tratta di un vero ordigno ma bensi' si un giocattolo 
 # atto a ricreare funzionalita' di un vero ordingno a tempo con 
 # possibilita' di essere disinnescato tagliando dei fili in 
-# ordine specifico.  Davide Gentilucci non si assume responsabilia' 
+# ordine specifico. Davide Gentilucci, l'asd NARCOS e l'asd I GUARDIANI DEL PO non si assume responsabilia' 
 # alcuna per l'uso improprio di questo script
 
 
@@ -23,23 +23,12 @@ global screenlock
 screenlock = Semaphore(value=1)
 
 global version
-version = '0.3'
+version = '0.4'
 
 global arr
-#wires_arr=OrderedDict[4,17,27,22,23,24,25,5]
 wires_arr=[]
 
-#prova ordinamento taglio fili
 
-
-# global w_a,w_b,w_c,w_d,w_e,w_f,w_g,w_h
-# w_a = w_b = w_c = w_d = w_e = w_f = w_g = w_h = False
-
-
-
-
-
-    
     
 def printOnLcD(str,row):
     screenlock.acquire()
@@ -51,7 +40,10 @@ def getWiresOrder():
     arr = file.read().split(" ")
     arr=filter(None,map(int, arr))
     return arr
-   
+
+def touch(path):
+    with open(path, 'a'):
+        os.utime(path, None)   
         
 
 ##classe gestione cronometro   
@@ -73,8 +65,8 @@ class CountdownProgram:
         return time 
     
     def run(self):
-        global multiLang
-        printOnLcD("GDP narcos bomb %s" % version,1) 
+        
+        
         touch(PID_FILE)
         
         while self._running:
@@ -107,8 +99,8 @@ class WiresCheck:
 
         self.wires_arr=getWiresOrder() 
         
+        # interruttore a chiave
         
-
         
         for pin in self.wires_arr:
             GPIO.setup(pin, GPIO.IN)  
@@ -119,7 +111,11 @@ class WiresCheck:
     
 
     def run(self):
+    
         defuseError=False;
+        defuseCorrect=0;
+        defused=False;
+        
         while Stopwatch._running:
         
             if (self.w_a or self.w_b or self.w_c or self.w_d or self.w_e or self.w_f or self.w_g or self.w_h):
@@ -129,83 +125,93 @@ class WiresCheck:
                 str="Defuse it!"
                 printOnLcD(str,3)   
                 
+            
+                
                 
             #############################################
             if len(self.wires_arr) > 0:
-                if GPIO.input(self.wires_arr[0]) == GPIO.LOW:
+                if GPIO.input(self.wires_arr[0]) == GPIO.HIGH and not self.w_a:
                     print("Wire #1 cutted")
                     if not self.w_a and not self.w_b and not self.w_c and not self.w_d and not self.w_e and not self.w_f and not self.w_g and not self.w_h:
                         print("ORDER GOOD")
-                        w_a=True
+                        defuseCorrect+=1
+                        self.w_a=True
                     else:
                         defuseError=True;
             #############################################
             #############################################
             if len(self.wires_arr) > 1 and not defuseError:    
-                if GPIO.input(self.wires_arr[1]) == GPIO.LOW:
+                if GPIO.input(self.wires_arr[1]) == GPIO.HIGH and not self.w_b:
                     print("Wire #2 cutted")
                     if self.w_a and not self.w_b and not self.w_c and not self.w_d and not self.w_e and not self.w_f and not self.w_g and not self.w_h:
                         print("ORDER GOOD")
+                        defuseCorrect+=1
                         self.w_b=True
                     else:
                         defuseError=True;
             #############################################
             #############################################
             if len(self.wires_arr) > 2 and not defuseError:             
-                if GPIO.input(self.wires_arr[2]) == GPIO.LOW:
+                if GPIO.input(self.wires_arr[2]) == GPIO.HIGH and not self.w_c:
                     print("Wire #3 cutted")
                     if self.w_a and self.w_b and not self.w_c and not self.w_d and not self.w_e and not self.w_f and not self.w_g and not self.w_h:
                         print("ORDER GOOD")
+                        defuseCorrect+=1
                         self.w_c=True
                     else:
                         defuseError=True;
             #############################################
             #############################################
             if len(self.wires_arr) > 3 and not defuseError:         
-                if GPIO.input(self.wires_arr[3]) == GPIO.LOW:
+                if GPIO.input(self.wires_arr[3]) == GPIO.HIGH and not self.w_d:
                     print("Wire #4 cutted")
                     if self.w_a and self.w_b and self.w_c and not self.w_d and not self.w_e and not self.w_f and not self.w_g and not self.w_h:
                         print("ORDER GOOD")
+                        defuseCorrect+=1
                         self.w_d=True
                     else:
                         defuseError=True;
             #############################################
             #############################################       
             if len(self.wires_arr) > 4 and not defuseError:        
-                if GPIO.input(self.wires_arr[4]) == GPIO.LOW:
+                if GPIO.input(self.wires_arr[4]) == GPIO.HIGH and not self.w_e:
                     print("Wire #5 cutted")
                     if self.w_a and self.w_b and self.w_c and self.w_d and not self.w_e and not self.w_f and not self.w_g and not self.w_h:
                         print("ORDER GOOD")
+                        defuseCorrect+=1
                         self.w_e=True
                     else:
                         defuseError=True;
             #############################################
             #############################################
             if len(self.wires_arr) > 5 and not defuseError:         
-                if GPIO.input(self.wires_arr[5]) == GPIO.LOW:
+                if GPIO.input(self.wires_arr[5]) == GPIO.HIGH and not self.w_f:
                     print("Wire #6 cutted")
                     if self.w_a and self.w_b and self.w_c and self.w_d and  self.w_e and not self.w_f and not self.w_g and not self.w_h:
                         print("ORDER GOOD")
+                        defuseCorrect+=1
                         self.w_f=True
                     else:
                         defuseError=True;
             #############################################
             #############################################       
             if len(self.wires_arr) > 6 and not defuseError:        
-                if GPIO.input(self.wires_arr[6]) == GPIO.LOW:
+                if GPIO.input(self.wires_arr[6]) == GPIO.HIGH and not self.w_g:
                     print("Wire #7 cutted")
                     if self.w_a and self.w_b and self.w_c and  self.w_d and  self.w_e and self.w_f and not self.w_g and not self.w_h:
                         print("ORDER GOOD")
+                        defuseCorrect+=1
                         self.w_g=True
                     else:
                         defuseError=True;
             #############################################
             #############################################        
             if len(self.wires_arr) > 7 and not defuseError:         
-                if GPIO.input(self.wires_arr[7]) == GPIO.LOW:
+                if GPIO.input(self.wires_arr[7]) == GPIO.HIGH and not self.w_h:
                     print("Wire #8 cutted")
                     if self.w_a and self.w_b and self.w_c and  self.w_d and  self.w_e and  self.w_f and  self.w_g and not self.w_h:
                         print("ORDER GOOD")
+                        defuseCorrect+=1
                         self.w_h=True
                     else:
                         defuseError=True;
@@ -216,18 +222,24 @@ class WiresCheck:
                 
                 Stopwatch.terminate()
             
-            
-       
-        printOnLcD("BOOOOOOM!!",3)
+            if len(self.wires_arr) == defuseCorrect:
+                Stopwatch.terminate()
+                defused=True
+                
+                
+        if not defused:
+            printOnLcD("BOOOOOOM!!",3)
+            printOnLcD("YOU LOOSE",4)
+        else:
+            printOnLcD("BOMB",3)
+            printOnLcD("DEFUSED",4)
         
         os.remove(PID_FILE)
     
         self.terminate()
         
 
-def touch(path):
-    with open(path, 'a'):
-        os.utime(path, None)
+
 
         
 
@@ -237,32 +249,38 @@ if __name__ == '__main__':
  
 
     try:
-    
-        #GPIO.wait_for_edge(24, GPIO.FALLING)
-    
-    
         
-        #Create Class
-        Stopwatch = CountdownProgram()
-        #Create Thread
-        StopwatchThread = Thread(target=Stopwatch.run) 
-        #Start Thread 
-        StopwatchThread.start()
+        started = False
+        GPIO.setup(21, GPIO.IN) 
+       
+        while not started:
+            if not started and GPIO.input(21) == GPIO.HIGH:
 
-        
-        #Create Class
-        DefuseBomb = WiresCheck()
-        #Create Thread
-        DefuseBombThread = Thread(target=DefuseBomb.run) 
-        #Start Thread 
-        DefuseBombThread.start()
-        
-        
-        
-        
-        
+                #Create Class
+                Stopwatch = CountdownProgram()
+                #Create Thread
+                StopwatchThread = Thread(target=Stopwatch.run) 
+                #Start Thread 
+                StopwatchThread.start()
+
+                
+                #Create Class
+                DefuseBomb = WiresCheck()
+                #Create Thread
+                DefuseBombThread = Thread(target=DefuseBomb.run) 
+                #Start Thread 
+                DefuseBombThread.start()
+                
+                started = True
+            
+            # if started and GPIO.input(21) == GPIO.LOW:
+            
+                # Stopwatch.terminate()
+                # DefuseBomb.terminate()
     
-        
+            if not started and GPIO.input(21) == GPIO.LOW:
+                printOnLcD("GDP narcos bomb %s" % version,1) 
+                printOnLcD("Girare la chiave",2) 
         
     except KeyboardInterrupt:
         pass        
