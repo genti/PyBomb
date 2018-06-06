@@ -7,7 +7,7 @@ if (!ini_get("display_errors")) {
 
 $wires=4; #max 7 fili
 
-$wires_custom_array=array(4,17,27,22,23,24,25,5);
+$wires_custom_array=array(4,27,22,25); 
 
 
 $file_wires = "wires.txt";
@@ -100,7 +100,7 @@ if (file_exists("/home/pi/TIMER_RUNNING"))
     <div id="main">
        <h1 id="title"> Narcos PyBomb </h1>
               
-              <?php if (!$bomb_running){?>  
+        <?php if (!$bomb_running){?>  
       
         
         <div id="input">
@@ -111,6 +111,19 @@ if (file_exists("/home/pi/TIMER_RUNNING"))
             
         </div>
 
+        <div class="clear"></div>
+        <div id="game_mode">
+            <h2>Game mode</h2>
+            <form action="save_gametype.php" method="POST">
+                <select name="game">
+                    <option value="0">Disinnesco con N fili</option>
+                    <option value="1">Disinnesco con 1 filo</option>
+                    <option value="2">Innesco (a chiave)</option>
+                </select>
+                <input class="btn" type="submit" value="Salva" />
+            </form>
+            </div>
+        
         <div class="clear"></div>
         
         <div id="wires">
