@@ -24,3 +24,7 @@ Aggiunti messaggi di conferma disinnesco ed esplosione
 v 0.41
 
 Modificato css al webserver
+
+v 0.43
+
+Modificato pull up down resistor in test_thread
