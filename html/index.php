@@ -8,7 +8,7 @@ if (!ini_get("display_errors")) {
 $wires=4; #max 7 fili
 
 $wires_custom_array=array(4,27,22,25); 
-
+$human_horder=array(1,2,3,4);
 
 $file_wires = "wires.txt";
 $current_W = file_get_contents($file_wires);
@@ -134,15 +134,15 @@ if (file_exists("/home/pi/TIMER_RUNNING"))
             <ul id="sortabale">
             <?php if (count($custom_order) > 0){
                
-                foreach ($custom_order as &$value) { ?>
-                     <li class="wire draggable" id="<?=$value?>">#<?=$value?></li>
+                foreach ($custom_order as $k=>&$value) { ?>
+                     <li class="wire draggable" id="<?=$value?>">#<?=$human_horder[array_search($value, $wires_custom_array)]?></li>
                <?php  }
                 
                 
             }else{
                 for($i=0;$i<$wires;$i++){ 
                 ?>
-                   <li class="wire draggable" id="<?=$wires_custom_array[$i]?>">#<?=$wires_custom_array[$i]?></li>
+                   <li class="wire draggable" id="<?=$wires_custom_array[$i]?>">#<?=$human_horder[$i]?></li>
             <?php
             } }
             ?>

@@ -14,7 +14,7 @@ import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 
 global lcd,enabled
-enabled = True
+log_enabled = False
 lcd = lcddriver.lcd()
 
 global PID_FILE
@@ -24,13 +24,14 @@ global screenlock
 screenlock = Semaphore(value=1)
 
 global version
-version = '0.4'
+version = '0.5'
 
 global arr
 wires_arr=[]
 
 def printLog(str):
-    print str
+    if log_enabled:
+        print str
         
 def printOnLcD(str,row):
     screenlock.acquire()
@@ -95,11 +96,12 @@ class WiresCheck:
             if defuseCorrect == 1:
                 str="Defusing"
                 printOnLcD(str,3)
-                printOnLcD("",4)                
+                              
             if defuseCorrect == 0:
                 str="Defuse it!"
                 printOnLcD(str,3)  
-                printOnLcD("",4)
+            
+            printOnLcD("%s wires remains" % (4-defuseCorrect),4)
             
             #############################################
             if len(self.wires_arr) > 0:
@@ -160,6 +162,7 @@ class WiresCheck:
             printOnLcD("DEFUSED",4)
         os.remove(PID_FILE)
         self.terminate()
+        GPIO.cleanup() 
      
 if __name__ == '__main__':
     try:
