@@ -1,22 +1,25 @@
 <?php
-if (!ini_get("display_errors")) {
-    ini_set("display_errors", "1");
-}
-
-
-
 $wires=4; #max 7 fili
 
 $wires_custom_array=array(4,27,22,25); 
 $human_horder=array(1,2,3,4);
 
-$file_wires = "wires.txt";
-$current_W = file_get_contents($file_wires);
-$custom_order=array_filter(explode(" ",trim($current_W)));
+// $file_wires = "wires.txt";
+// $current_W = file_get_contents($file_wires);
+// $custom_order=array_filter(explode(" ",trim($current_W)));
 
-$file_time = "time.txt";
-$current_T = file_get_contents($file_time);
-$time_array=explode(" ",$current_T);
+// $file_time = "time.txt";
+// $current_T = file_get_contents($file_time);
+// $time_array=explode(" ",$current_T);
+
+$configuration = "game_config.txt";
+$conf = file_get_contents($configuration);
+$conf=explode("|",$conf);
+
+$time_array=explode(" ",$conf[2]);
+
+
+$custom_order=array_filter(explode(" ",trim($conf[1])));
 
 
 if(count($custom_order)>0 && count($custom_order) != $wires){
@@ -54,6 +57,12 @@ if (file_exists("/home/pi/TIMER_RUNNING"))
  var str="";
   $( function() {
       
+       <?php if ($conf[0]==1){?>
+       $('.radio_gamemode').removeClass('hidden');  
+        <?php } ?>
+   
+   
+      
      <?php  if (!$bomb_running){ ?> 
       
       $("#switch").click(function(){ 
@@ -68,17 +77,21 @@ if (file_exists("/home/pi/TIMER_RUNNING"))
         
   <?php } ?>
       
-      
-      
-      
-      
       $(".wire").each(function(){
                 str=str+" "+this.id;                
                 $("#wire_new_order").val(str);
             });
       
-   // $("#wires").draggable();
-    $( "#sortabale" ).sortable({
+  
+   
+   enableSortable()
+    
+   
+     $( "ul, li" ).disableSelection();
+  } );
+  
+   function enableSortable(){
+       $( "#sortabale" ).sortable({
       revert: true,
       start: function(){ str="";},
       stop: function( event, ui ) { 
@@ -89,9 +102,16 @@ if (file_exists("/home/pi/TIMER_RUNNING"))
       }
 
     });
+       
+   }
    
-     $( "ul, li" ).disableSelection();
-  } );
+   function disableSortable(){
+       
+       $( "#sortabale" ).sortable( "disable" );
+   }
+   
+  
+   
   </script>
   </head>
   <body>
@@ -102,32 +122,31 @@ if (file_exists("/home/pi/TIMER_RUNNING"))
               
         <?php if (!$bomb_running){?>  
       
-        
+         <form action="save_gameconfig.php" method="POST">
         <div id="input">
         <h2>Detonation time</h2>
-            <form action="save_time.php" method="POST">
-                <input type="text" name="HH" value="<?= isset($time_array[0]) ? $time_array[0] : "" ?>" maxlength="2" />:<input  value="<?= isset($time_array[1]) ? $time_array[1] : "" ?>" type="text" name="MM" maxlength="2"/>:<input value="<?= isset($time_array[2]) ? $time_array[2] : "00" ?>" type="text" name="SS" maxlength="2"/> | <input class="btn" type="submit" value="GO" />
-            </form>
+           <div>
+                <input type="text" name="HH" value="<?= isset($time_array[0]) ? $time_array[0] : "" ?>" maxlength="2" />:<input  value="<?= isset($time_array[1]) ? $time_array[1] : "" ?>" type="text" name="MM" maxlength="2"/>:<input value="<?= isset($time_array[2]) ? $time_array[2] : "00" ?>" type="text" name="SS" maxlength="2"/>
+          </div>
             
         </div>
 
         <div class="clear"></div>
         <div id="game_mode">
             <h2>Game mode</h2>
-            <form action="save_gametype.php" method="POST">
-                <select name="game">
-                    <option value="0">Disinnesco con N fili</option>
-                    <option value="1">Disinnesco con 1 filo</option>
-                    <option value="2">Innesco (a chiave)</option>
+                <div>
+                <select id="gametype" name="gametype">
+                    <option value="0"  <?=($conf[0]==0 ? 'selected' : '')?>>Disinnesco con fili in ordine corretto</option>
+                    <option value="1" <?=($conf[0]==1 ? 'selected' : '')?>>1 filo disinnesca, 1&deg; errore dimezza tempo, 2&deg; errore esplode</option>      
                 </select>
-                <input class="btn" type="submit" value="Salva" />
-            </form>
+                
+                </div>
             </div>
         
         <div class="clear"></div>
         
         <div id="wires">
-        <form action="save_wires.php" method="POST">
+       
             <h2>Wire correct cutting order <span>(drag to sort)</span> </h2>
             
            
@@ -150,9 +169,9 @@ if (file_exists("/home/pi/TIMER_RUNNING"))
             <span class="hr"></span>
             <input type="text" id="wire_new_order" class="hidden" value="<?=$current_W?>" name="order"/>
             <input type="submit" class="btn" value="SALVA" />
-            </form>
+           
         </div>
-        
+          </form>
         
         
        

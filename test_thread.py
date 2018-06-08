@@ -20,11 +20,11 @@ lcd = lcddriver.lcd()
 global PID_FILE
 PID_FILE='/home/pi/TIMER_RUNNING'
 
-global screenlock 
+global screenlock,gametype 
 screenlock = Semaphore(value=1)
 
 global version
-version = '0.5'
+version = '0.6'
 
 global arr
 wires_arr=[]
@@ -40,11 +40,30 @@ def printOnLcD(str,row):
    
 
 def getWiresOrder():
-    file = open("/home/pi/scripts/PyBomb/html/wires.txt", "r")
-    arr = file.read().split(" ")
+    file = open("/home/pi/scripts/PyBomb/html/game_config.txt", "r")
+    arr = file.read().split("|")
+    arr = arr[1].split(" ")
     arr=filter(None,map(int, arr))
+  
     return arr
 
+def getGameType():
+    file = open("/home/pi/scripts/PyBomb/html/game_config.txt", "r")
+    arr = file.read().split("|")
+    gametype = arr[0]
+   
+    return int(gametype)
+    
+def getTimeFromString():
+        
+        file = open("/home/pi/scripts/PyBomb/html/game_config.txt", "r")
+        arr = file.read().split("|")
+        arr = arr[2].split(" ")
+        
+        time=(int(arr[0])*3600)+(int(arr[1])*60)+(int(arr[2]))
+        return time        
+    
+    
 def touch(path):
     with open(path, 'a'):
         os.utime(path, None)   
@@ -52,22 +71,20 @@ def touch(path):
 class CountdownProgram:  
     def __init__(self):
         self._running = True
+        global timer_rem
+        timer_rem = getTimeFromString()
     def terminate(self):  
         self._running = False  
-    def getTimeFromString(self):
-        file = open("/home/pi/scripts/PyBomb/html/time.txt", "r")
-        arr = file.read() .split(" ")
-        time=(int(arr[0])*3600)+(int(arr[1])*60)+(int(arr[2]))
-        return time    
+    
     def run(self): 
         i=0
         inc=True
-        
+        global timer_rem
         DefuseBomb = WiresCheck()
         DefuseBombThread = Thread(target=DefuseBomb.run) 
         DefuseBombThread.start()
         while self._running:
-            timer_rem=self.getTimeFromString()
+            
             while timer_rem >0 and self._running:
                 timer_rem=timer_rem-1
                 m, s = divmod(timer_rem, 60)
@@ -84,24 +101,40 @@ class WiresCheck:
         self.wires_arr=getWiresOrder()
         GPIO.setup(self.wires_arr, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         
+        
+        if (gametype == 1): 
+            printOnLcD("",3)
+            printOnLcD("",4)
+                
+                
     def terminate(self):  
         self._running = False 
         
     def run(self):
         defuseError=False;
+        defuseError_counter=0;
         defuseCorrect=0;
         defused=False;
-        
+        global timer_rem
         while Stopwatch._running:
-            if defuseCorrect == 1:
-                str="Defusing"
-                printOnLcD(str,3)
-                              
-            if defuseCorrect == 0:
-                str="Defuse it!"
-                printOnLcD(str,3)  
             
-            printOnLcD("%s wires remains" % (4-defuseCorrect),4)
+            printLog ("wire loop gametype %s  " % gametype)
+            if (gametype == 0):
+            
+                if defuseCorrect > 0:
+                    str="Defusing"
+                    printOnLcD(str,3)
+                    printOnLcD("%s wires remains" % (4-defuseCorrect),4)            
+                if defuseCorrect == 0:
+                    str="Defuse it!"
+                    printOnLcD(str,3)  
+                
+                
+                
+          
+            
+          
+            
             
             #############################################
             if len(self.wires_arr) > 0:
@@ -113,6 +146,7 @@ class WiresCheck:
                         self.w_a=True
                     else:
                         defuseError=True;
+                        self.w_a=True
             #############################################
             if len(self.wires_arr) > 1 and not defuseError:    
                 if GPIO.input(self.wires_arr[1]) == GPIO.HIGH and not self.w_b:
@@ -123,6 +157,7 @@ class WiresCheck:
                         self.w_b=True
                     else:
                         defuseError=True;
+                        self.w_b=True
             #############################################
             if len(self.wires_arr) > 2 and not defuseError:             
                 if GPIO.input(self.wires_arr[2]) == GPIO.HIGH and not self.w_c:
@@ -133,6 +168,7 @@ class WiresCheck:
                         self.w_c=True
                     else:
                         defuseError=True;
+                        self.w_c=True
             #############################################
             if len(self.wires_arr) > 3 and not defuseError:         
                 if GPIO.input(self.wires_arr[3]) == GPIO.HIGH and not self.w_d:
@@ -142,18 +178,36 @@ class WiresCheck:
                         defuseCorrect+=1
                         self.w_d=True
                     else:
+                        printLog ("defuse error #4")
                         defuseError=True;
+                        self.w_d=True
                         
                         
                         
-        
-            if defuseError:
-                Stopwatch.terminate()
+            if gametype==0:
+                if defuseError:
+                    Stopwatch.terminate()
+            else:
+                
+                if defuseError:
+                    printLog ("defuse error")
+                    defuseError_counter=defuseError_counter+1;
+                    timer_rem = timer_rem/2;
+                    defuseError=False
+                    printOnLcD("",3)
+                    printOnLcD("!!! CISTI ||| ",4)
+                if  defuseError_counter==2:
+                    
+                    printLog ("end loop")
+                    Stopwatch.terminate()
+                
+                
             if len(self.wires_arr) == defuseCorrect:
                 Stopwatch.terminate()
                 defused=True
-            printLog ("wire loop      ")
+            
             time.sleep(0.5)
+            
         if not defused:
             printOnLcD("BOOOOOOM!!",3)
             printOnLcD("YOU LOOSE",4)
@@ -170,7 +224,7 @@ if __name__ == '__main__':
         b=False
         GPIO.cleanup() 
         GPIO.setup(21, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        
+        gametype=getGameType()
         touch(PID_FILE)
         printLog ("__init__")
         while not started:
@@ -186,8 +240,12 @@ if __name__ == '__main__':
                 started = True
             if not b:
                 printOnLcD("GDP PyBomb v %s" % version,1) 
-                printOnLcD("Gira la chiave per",3)
-                printOnLcD("innescare la bomba",4)
+                printOnLcD("Innesca con chiave",3)
+                if gametype==0:
+                    gt='All wire defuse'
+                else:
+                    gt='One wire defuse'
+                printOnLcD("GAME:%s" % gt,4)
                 b=True
             time.sleep(.5)
     except KeyboardInterrupt:

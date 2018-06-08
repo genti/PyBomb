@@ -28,3 +28,12 @@ Modificato css al webserver
 v 0.43
 
 Modificato pull up down resistor in test_thread
+
+
+v 0.5
+
+Modifiche grafiche
+
+v 0.6
+
+Inserita nuova modalità di gioco
