@@ -169,7 +169,7 @@ if __name__ == '__main__':
         started = False
         b=False
         GPIO.cleanup() 
-        GPIO.setup(21, GPIO.IN)
+        GPIO.setup(21, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         
         touch(PID_FILE)
         printLog ("__init__")

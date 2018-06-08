@@ -20,7 +20,7 @@ $time_array=explode(" ",$current_T);
 
 
 if(count($custom_order)>0 && count($custom_order) != $wires){
-    file_put_contents($file, "");
+    file_put_contents($file_wires, "");
     header("Location: index.php");
 } 
 

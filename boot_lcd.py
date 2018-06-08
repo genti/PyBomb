@@ -20,8 +20,8 @@ def main():
     IP=commands.getoutput('hostname -I')
     # Send some test
     screenlock.acquire()
-    lcd.display_string("GDP narcos bomb".center(20),1) 
-    lcd.display_string("ip:%s" % IP.center(20),2) 
+    lcd.display_string("GDP narcos bomb".center(20),2) 
+    lcd.display_string("%s" % IP.center(20),3) 
     screenlock.release()
     
 if __name__ == '__main__':
