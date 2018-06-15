@@ -37,8 +37,16 @@ def printOnLcD(str,row):
     screenlock.acquire()
     lcd.display_string(str.center(20),row) 
     screenlock.release()    
-   
-
+ 
+def suonaBuzzer(sec):
+    printLog("SUONA")
+    GPIO.output(5,GPIO.LOW)
+    time.sleep(sec)
+    GPIO.output(5,GPIO.HIGH)
+    printLog("SUONA STOP")
+    time.sleep(.05)
+    
+    
 def getWiresOrder():
     file = open("/home/pi/scripts/PyBomb/html/game_config.txt", "r")
     arr = file.read().split("|")
@@ -102,11 +110,7 @@ class WiresCheck:
         GPIO.setup(self.wires_arr, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         
         
-        if (gametype == 1): 
-            printOnLcD("",3)
-            printOnLcD("",4)
-                
-                
+                      
     def terminate(self):  
         self._running = False 
         
@@ -184,24 +188,11 @@ class WiresCheck:
                         
                         
                         
-            if gametype==0:
-                if defuseError:
-                    Stopwatch.terminate()
-            else:
-                
-                if defuseError:
-                    printLog ("defuse error")
-                    defuseError_counter=defuseError_counter+1;
-                    timer_rem = timer_rem/2;
-                    defuseError=False
-                    printOnLcD("",3)
-                    printOnLcD("!!! CISTI ||| ",4)
-                if  defuseError_counter==2:
-                    
-                    printLog ("end loop")
-                    Stopwatch.terminate()
-                
-                
+           
+            if defuseError:
+                printLog ("end loop")
+                Stopwatch.terminate()
+
             if len(self.wires_arr) == defuseCorrect:
                 Stopwatch.terminate()
                 defused=True
@@ -211,12 +202,13 @@ class WiresCheck:
         if not defused:
             printOnLcD("BOOOOOOM!!",3)
             printOnLcD("YOU LOOSE",4)
+            suonaBuzzer(3)
         else:
             printOnLcD("BOMB",3)
             printOnLcD("DEFUSED",4)
         os.remove(PID_FILE)
         self.terminate()
-        GPIO.cleanup() 
+        #GPIO.cleanup() 
      
 if __name__ == '__main__':
     try:
@@ -227,6 +219,11 @@ if __name__ == '__main__':
         gametype=getGameType()
         touch(PID_FILE)
         printLog ("__init__")
+        
+        GPIO.setup(5,GPIO.OUT)
+        GPIO.output(5,GPIO.HIGH)
+        
+        
         while not started:
             
             printLog ("loop started")
@@ -241,11 +238,6 @@ if __name__ == '__main__':
             if not b:
                 printOnLcD("GDP PyBomb v %s" % version,1) 
                 printOnLcD("Innesca con chiave",3)
-                if gametype==0:
-                    gt='All wire defuse'
-                else:
-                    gt='One wire defuse'
-                printOnLcD("GAME:%s" % gt,4)
                 b=True
             time.sleep(.5)
     except KeyboardInterrupt:

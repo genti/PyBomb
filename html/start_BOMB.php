@@ -1,6 +1,6 @@
 <?php 
 
-$command='/usr/bin/screen -S test -d -m /usr/bin/python /home/pi/scripts/PyBomb/test_thread.py' ; 
+$command='/usr/bin/screen -S test -d -m /usr/bin/python /home/pi/scripts/PyBomb/mode_oneWire.py' ; 
 
 exec($command, $output);
 

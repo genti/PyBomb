@@ -56,6 +56,7 @@ if (file_exists("/home/pi/TIMER_RUNNING"))
  <script>
  var str="";
   $( function() {
+
       
        <?php if ($conf[0]==1){?>
        $('.radio_gamemode').removeClass('hidden');  
@@ -136,8 +137,8 @@ if (file_exists("/home/pi/TIMER_RUNNING"))
             <h2>Game mode</h2>
                 <div>
                 <select id="gametype" name="gametype">
-                    <option value="0"  <?=($conf[0]==0 ? 'selected' : '')?>>Disinnesco con fili in ordine corretto</option>
-                    <option value="1" <?=($conf[0]==1 ? 'selected' : '')?>>1 filo disinnesca, 1&deg; errore dimezza tempo, 2&deg; errore esplode</option>      
+                    <option disabled  value="0"  <?=($conf[0]==0 ? 'selected' : '')?>>Disinnesco con fili in ordine corretto</option>
+                    <option value="1" <?=($conf[0]==1 ? 'selected' : '')?>>1 filo disinnesca, no errori</option>      
                 </select>
                 
                 </div>
@@ -147,7 +148,7 @@ if (file_exists("/home/pi/TIMER_RUNNING"))
         
         <div id="wires">
        
-            <h2>Wire correct cutting order <span>(drag to sort)</span> </h2>
+            <h2>Posizionare il filo per il disinnesco alla prima posizione<span>(drag to sort)</span> </h2>
             
            
             <ul id="sortabale">
@@ -168,19 +169,20 @@ if (file_exists("/home/pi/TIMER_RUNNING"))
             </ul>
             <span class="hr"></span>
             <input type="text" id="wire_new_order" class="hidden" value="<?=$current_W?>" name="order"/>
-            <input type="submit" class="btn" value="SALVA" />
+            
            
         </div>
-          </form>
+          
         
         
        
             
-            <div id="switch" class="">
-                    PREPARE
-            </div>
-           
+            <input type="submit" id="switch" class="btn" value="GAME START" />
+           </form>
      
+        
+        
+            <a href="poweroff.php" onclick="return confirm('Confermi spegnimento?');" id="poweroff" > OFF </a>
         
         
         

@@ -2,7 +2,7 @@
 #--------------------------------------
 #--------------------------------------
 #--------------------------------------
-#-------- NARCOS pyBomb v0.6 ----------
+#-------- NARCOS pyBomb v0.7 ----------
 #--------------------------------------
 #--------------------------------------
 #--------------------------------------
@@ -20,7 +20,7 @@ def main():
     IP=commands.getoutput('hostname -I')
     # Send some test
     screenlock.acquire()
-    lcd.display_string("GDP narcos bomb".center(20),2) 
+    lcd.display_string("GDP PyBomb".center(20),2) 
     lcd.display_string("%s" % IP.center(20),3) 
     screenlock.release()
     
